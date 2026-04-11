@@ -41,6 +41,23 @@ chmod +x ~/.config/opencode/plugins/saia/generate-saia-config.sh
 chmod +x ~/.config/opencode/plugins/saia/copy-saia-config.sh
 ```
 
+### Configure Environment Variables
+
+Add the following to your `~/.bashrc` or `~/.zshrc` to permanently set the SAIA API key and OpenCode location:
+
+```bash
+# SAIA API Key
+export SAIA_API_KEY="your_api_key_here"
+
+# OpenCode location (if not already in PATH)
+export PATH="$PATH:/path/to/opencode"
+```
+
+Then reload your shell configuration:
+```bash
+source ~/.bashrc  # or source ~/.zshrc
+```
+
 This copies the plugin along with all its scripts and configuration to `~/.config/opencode/plugins/saia/`. The plugin references the scripts from the same directory, so everything works self-contained.
 
 ## Quick Start
