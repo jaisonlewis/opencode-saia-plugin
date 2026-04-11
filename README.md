@@ -33,14 +33,11 @@ cd opencode-saia-plugin
 ### Install the Plugin
 
 ```bash
-# Copy the entire src directory to OpenCode plugins
+# Copy the entire src directory to OpenCode plugins (recommended)
 cp -r src ~/.config/opencode/plugins/saia
-
-# Or copy just the plugin file
-cp src/saia.ts ~/.config/opencode/plugins/saia.ts
 ```
 
-The plugin and all its scripts are self-contained in the `src` directory.
+This copies the plugin along with all its scripts and configuration to `~/.config/opencode/plugins/saia/`. The plugin references the scripts from the same directory, so everything works self-contained.
 
 ## Quick Start
 
@@ -50,7 +47,7 @@ Install the plugin and let it handle everything automatically:
 
 ```bash
 # Install the plugin
-cp src/saia.ts ~/.config/opencode/plugins/saia.ts
+cp -r src ~/.config/opencode/plugins/saia
 
 # Set SAIA_API_KEY (if not already set)
 export SAIA_API_KEY=your_key
@@ -209,10 +206,10 @@ Models are automatically categorized:
 ### Plugin Not Working
 
 If the plugin doesn't create `opencode.json`:
-1. Check if plugin is installed: `ls ~/.config/opencode/plugins/saia.ts`
-2. Check if scripts exist in the src directory
+1. Check if plugin directory exists: `ls ~/.config/opencode/plugins/saia`
+2. Check if scripts exist in the plugin directory: `ls ~/.config/opencode/plugins/saia/`
 3. Check SAIA_API_KEY is set: `echo $SAIA_API_KEY`
-4. Check if master config exists: `ls src/opencode-saia.json`
+4. Check if master config exists: `ls ~/.config/opencode/plugins/saia/opencode-saia.json`
 
 ### Script Fails
 
