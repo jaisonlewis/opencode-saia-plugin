@@ -23,6 +23,8 @@ This package provides three components for SAIA integration:
 
 ## Installation
 
+Install official version of Opencode from https://opencode.ai/
+
 ### Clone the Repository
 
 ```bash
@@ -86,7 +88,8 @@ opencode
 1. Fetch latest SAIA models from API
 2. Update master configuration
 3. Copy configuration to current directory
-4. Show logs indicating success
+
+exit Opencode and start it again. You should have a list of SAIA models.
 
 ### Manual (Scripts Only)
 
@@ -101,6 +104,7 @@ cd src
 cd /path/to/your/project
 /path/to/opencode-saia-plugin/src/copy-saia-config.sh
 ```
+exit Opencode and start it again. You should have a list of SAIA models.
 
 ## Files
 
