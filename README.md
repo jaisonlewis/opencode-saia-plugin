@@ -35,6 +35,10 @@ cd opencode-saia-plugin
 ```bash
 # Copy the entire src directory to OpenCode plugins (recommended)
 cp -r src ~/.config/opencode/plugins/saia
+
+# Make the scripts executable
+chmod +x ~/.config/opencode/plugins/saia/generate-saia-config.sh
+chmod +x ~/.config/opencode/plugins/saia/copy-saia-config.sh
 ```
 
 This copies the plugin along with all its scripts and configuration to `~/.config/opencode/plugins/saia/`. The plugin references the scripts from the same directory, so everything works self-contained.
@@ -48,6 +52,10 @@ Install the plugin and let it handle everything automatically:
 ```bash
 # Install the plugin
 cp -r src ~/.config/opencode/plugins/saia
+
+# Make the scripts executable
+chmod +x ~/.config/opencode/plugins/saia/generate-saia-config.sh
+chmod +x ~/.config/opencode/plugins/saia/copy-saia-config.sh
 
 # Set SAIA_API_KEY (if not already set)
 export SAIA_API_KEY=your_key
