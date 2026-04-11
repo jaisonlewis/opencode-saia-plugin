@@ -21,6 +21,41 @@ This package provides three components for SAIA integration:
 - **Plugin Automation**: Automatically updates and copies when OpenCode starts
 - **Full Permissions**: Includes all necessary OpenCode permissions for SAIA
 
+## Installation
+
+### Clone the Repository
+
+```bash
+git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
+cd opencode-saia-plugin
+```
+
+### Where to Copy Script Files
+
+For manual script usage, you have two options:
+
+**Option A: Use scripts from repository directory**
+```bash
+# Keep the repository and run scripts from there
+cd /path/to/opencode-saia-plugin
+./generate-saia-config.sh
+```
+
+**Option B: Copy scripts to a directory in your PATH**
+```bash
+# Copy scripts to a directory in your PATH (e.g., ~/.local/bin)
+mkdir -p ~/.local/bin
+cp generate-saia-config.sh copy-saia-config.sh ~/.local/bin/
+chmod +x ~/.local/bin/generate-saia-config.sh ~/.local/bin/copy-saia-config.sh
+
+# Add to PATH if not already there
+export PATH="$HOME/.local/bin:$PATH"
+
+# Now you can run scripts from anywhere
+generate-saia-config.sh
+copy-saia-config.sh
+```
+
 ## Quick Start
 
 ### Option 1: Automatic (Recommended - Plugin)
@@ -28,11 +63,7 @@ This package provides three components for SAIA integration:
 Install the plugin and let it handle everything automatically:
 
 ```bash
-# Clone the repository
-git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
-cd opencode-saia-plugin
-
-# Install the plugin
+# Install the plugin (from repository directory)
 cp src/saia.ts ~/.config/opencode/plugins/saia.ts
 
 # Set SAIA_API_KEY (if not already set)
@@ -54,10 +85,6 @@ opencode
 Use the scripts manually for more control:
 
 ```bash
-# Clone the repository
-git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
-cd opencode-saia-plugin
-
 # Step 1: Update master configuration with latest models
 ./generate-saia-config.sh
 
