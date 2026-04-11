@@ -1,7 +1,7 @@
 import type { Plugin } from "./index"
 import { execSync } from "child_process"
 import { existsSync } from "fs"
-import { join } from "path"
+import { join, dirname } from "path"
 
 /**
  * SAIA Plugin for OpenCode
@@ -12,8 +12,11 @@ import { join } from "path"
 export const SAIAPlugin: Plugin = async ({ directory }) => {
   console.log("[SAIA Plugin] Updating SAIA configuration...")
   
-  const generateScript = "/home/jaison/Documents/opencodesaia/opencode/packages/plugin/generate-saia-config.sh"
-  const copyScript = "/home/jaison/Documents/opencodesaia/opencode/packages/plugin/copy-saia-config.sh"
+  // Get the plugin directory from the current file location
+  const pluginDir = dirname(__filename)
+  const generateScript = join(pluginDir, "..", "generate-saia-config.sh")
+  const copyScript = join(pluginDir, "..", "copy-saia-config.sh")
+  const scriptDir = dirname(generateScript)
   
   // Check if scripts exist
   if (!existsSync(generateScript)) {
@@ -30,7 +33,7 @@ export const SAIAPlugin: Plugin = async ({ directory }) => {
     // Step 1: Update master configuration with latest models
     console.log("[SAIA Plugin] Running generate script to update master configuration...")
     execSync(generateScript, { 
-      cwd: "/home/jaison/Documents/opencodesaia/opencode/packages/plugin",
+      cwd: scriptDir,
       stdio: "inherit"
     })
   } catch (error) {

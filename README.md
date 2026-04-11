@@ -2,6 +2,8 @@
 
 Complete system for managing SAIA (GWDG Chat AI) configuration across multiple OpenCode projects.
 
+**Repository:** https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin
+
 ## Overview
 
 This package provides three components for SAIA integration:
@@ -26,8 +28,12 @@ This package provides three components for SAIA integration:
 Install the plugin and let it handle everything automatically:
 
 ```bash
+# Clone the repository
+git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
+cd opencode-saia-plugin
+
 # Install the plugin
-cp /home/jaison/Documents/opencodesaia/opencode/packages/plugin/src/saia.ts ~/.config/opencode/plugins/saia.ts
+cp src/saia.ts ~/.config/opencode/plugins/saia.ts
 
 # Set SAIA_API_KEY (if not already set)
 export SAIA_API_KEY=your_key
@@ -48,12 +54,16 @@ opencode
 Use the scripts manually for more control:
 
 ```bash
+# Clone the repository
+git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
+cd opencode-saia-plugin
+
 # Step 1: Update master configuration with latest models
-/home/jaison/Documents/opencodesaia/opencode/packages/plugin/generate-saia-config.sh
+./generate-saia-config.sh
 
 # Step 2: Copy to your project directory
 cd /path/to/your/project
-/home/jaison/Documents/opencodesaia/opencode/packages/plugin/copy-saia-config.sh
+/path/to/opencode-saia-plugin/copy-saia-config.sh
 ```
 
 ## Files
@@ -183,9 +193,9 @@ Models are automatically categorized:
 
 If the plugin doesn't create `opencode.json`:
 1. Check if plugin is installed: `ls ~/.config/opencode/plugins/saia.ts`
-2. Check if scripts exist: `ls /home/jaison/Documents/opencodesaia/opencode/packages/plugin/*.sh`
+2. Check if scripts exist in the repository directory
 3. Check SAIA_API_KEY is set: `echo $SAIA_API_KEY`
-4. Check if master config exists: `ls /home/jaison/Documents/opencodesaia/opencode/packages/plugin/opencode-saia.json`
+4. Check if master config exists: `ls opencode-saia.json`
 
 ### Script Fails
 
@@ -204,9 +214,12 @@ If SAIA models don't appear in OpenCode:
 
 ## Location
 
-All files are located at:
-```
-/home/jaison/Documents/opencodesaia/opencode/packages/plugin/
+**GitLab Repository:** https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin
+
+**Clone the repository:**
+```bash
+git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
+cd opencode-saia-plugin
 ```
 
 ## Alternative: Full SAIA Integration
