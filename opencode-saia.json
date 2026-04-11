@@ -1,0 +1,59 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": "allow",
+    "edit": "allow",
+    "read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "list": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "task": "allow",
+    "todowrite": "allow",
+    "todoread": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "codesearch": "allow",
+    "question": "allow",
+    "mymcp_*": "ask"
+  },
+  "model": "saia/glm-4.7",
+  "provider": {
+    "saia": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "SAIA (GWDG Chat AI)",
+      "options": {
+        "baseURL": "https://chat-ai.academiccloud.de/v1",
+        "apiKey": "{env:SAIA_API_KEY}"
+      },
+      "models": {
+        "qwen3-coder-30b-a3b-instruct": {"name": "qwen3-coder-30b-a3b-instruct (Building - Specialized Coding)"},
+        "qwen3.5-122b-a10b": {"name": "qwen3.5-122b-a10b (General Purpose)"},
+        "glm-4.7": {"name": "glm-4.7 (Building - Agentic Coding)"},
+        "qwen3.5-27b": {"name": "qwen3.5-27b (General Purpose)"},
+        "apertus-70b-instruct-2509": {"name": "apertus-70b-instruct-2509 (General Purpose)"},
+        "qwen3-omni-30b-a3b-instruct": {"name": "qwen3-omni-30b-a3b-instruct (General Purpose)"},
+        "devstral-2-123b-instruct-2512": {"name": "devstral-2-123b-instruct-2512 (Building - Agentic Coding)"},
+        "internvl3.5-30b-a3b": {"name": "internvl3.5-30b-a3b (General Purpose)"},
+        "gemma-4-31b-it": {"name": "gemma-4-31b-it (General Purpose)"},
+        "qwen3.5-35b-a3b": {"name": "qwen3.5-35b-a3b (General Purpose)"},
+        "qwen3.5-397b-a17b": {"name": "qwen3.5-397b-a17b (General Purpose)"},
+        "qwen3-vl-30b-a3b-instruct": {"name": "qwen3-vl-30b-a3b-instruct (General Purpose)"},
+        "mistral-large-3-675b-instruct-2512": {"name": "mistral-large-3-675b-instruct-2512 (Planning - Large Context)"},
+        "meta-llama-3.1-8b-instruct": {"name": "meta-llama-3.1-8b-instruct (General Purpose)"},
+        "openai-gpt-oss-120b": {"name": "openai-gpt-oss-120b (Planning - Large Context)"},
+        "gemma-3-27b-it": {"name": "gemma-3-27b-it (General Purpose)"},
+        "qwen3-30b-a3b-thinking-2507": {"name": "qwen3-30b-a3b-thinking-2507 (Planning - Advanced Reasoning)"},
+        "qwen3-30b-a3b-instruct-2507": {"name": "qwen3-30b-a3b-instruct-2507 (General Purpose)"},
+        "qwen3-32b": {"name": "qwen3-32b (General Purpose)"},
+        "qwen3-235b-a22b": {"name": "qwen3-235b-a22b (Planning - Large Context)"},
+        "llama-3.3-70b-instruct": {"name": "llama-3.3-70b-instruct (General Purpose)"},
+        "medgemma-27b-it": {"name": "medgemma-27b-it (General Purpose)"},
+        "deepseek-r1-distill-llama-70b": {"name": "deepseek-r1-distill-llama-70b (Planning - Advanced Reasoning)"},
+        "teuken-7b-instruct-research": {"name": "teuken-7b-instruct-research (General Purpose)"},
+        "llama-3.1-sauerkrautlm-70b-instruct": {"name": "llama-3.1-sauerkrautlm-70b-instruct (General Purpose)"}
+      }
+    }
+  }
+}
