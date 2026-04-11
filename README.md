@@ -30,40 +30,26 @@ git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
 cd opencode-saia-plugin
 ```
 
-### Where to Copy Script Files
+### Install the Plugin
 
-For manual script usage, you have two options:
-
-**Option A: Use scripts from repository directory**
 ```bash
-# Keep the repository and run scripts from there
-cd /path/to/opencode-saia-plugin
-./generate-saia-config.sh
+# Copy the entire src directory to OpenCode plugins
+cp -r src ~/.config/opencode/plugins/saia
+
+# Or copy just the plugin file
+cp src/saia.ts ~/.config/opencode/plugins/saia.ts
 ```
 
-**Option B: Copy scripts to a directory in your PATH**
-```bash
-# Copy scripts to a directory in your PATH (e.g., ~/.local/bin)
-mkdir -p ~/.local/bin
-cp generate-saia-config.sh copy-saia-config.sh ~/.local/bin/
-chmod +x ~/.local/bin/generate-saia-config.sh ~/.local/bin/copy-saia-config.sh
-
-# Add to PATH if not already there
-export PATH="$HOME/.local/bin:$PATH"
-
-# Now you can run scripts from anywhere
-generate-saia-config.sh
-copy-saia-config.sh
-```
+The plugin and all its scripts are self-contained in the `src` directory.
 
 ## Quick Start
 
-### Option 1: Automatic (Recommended - Plugin)
+### Automatic (Recommended - Plugin)
 
 Install the plugin and let it handle everything automatically:
 
 ```bash
-# Install the plugin (from repository directory)
+# Install the plugin
 cp src/saia.ts ~/.config/opencode/plugins/saia.ts
 
 # Set SAIA_API_KEY (if not already set)
@@ -80,30 +66,33 @@ opencode
 3. Copy configuration to current directory
 4. Show logs indicating success
 
-### Option 2: Manual (Scripts Only)
+### Manual (Scripts Only)
 
-Use the scripts manually for more control:
+Use the scripts directly from the src directory:
 
 ```bash
 # Step 1: Update master configuration with latest models
+cd src
 ./generate-saia-config.sh
 
 # Step 2: Copy to your project directory
 cd /path/to/your/project
-/path/to/opencode-saia-plugin/copy-saia-config.sh
+/path/to/opencode-saia-plugin/src/copy-saia-config.sh
 ```
 
 ## Files
 
+All files are located in the `src/` directory:
+
 ### Scripts
 
-- **`generate-saia-config.sh`**
+- **`src/generate-saia-config.sh`**
   - Fetches latest SAIA models from `https://chat-ai.academiccloud.de/v1/models`
   - Generates complete `opencode.json` with SAIA provider, models, and permissions
   - Updates master configuration: `opencode-saia.json`
   - Shows model count and update status
 
-- **`copy-saia-config.sh`**
+- **`src/copy-saia-config.sh`**
   - Copies master configuration to current directory as `opencode.json`
   - Fast operation (no API calls)
   - Shows model count
@@ -115,10 +104,11 @@ cd /path/to/your/project
   - Triggers when OpenCode starts in any directory
   - Always ensures latest models are available
   - Shows detailed logs
+  - References scripts from the same directory
 
 ### Configuration
 
-- **`opencode-saia.json`**
+- **`src/opencode-saia.json`**
   - Master configuration file
   - Contains all 25+ SAIA models with descriptions
   - Includes full OpenCode permissions
@@ -220,9 +210,9 @@ Models are automatically categorized:
 
 If the plugin doesn't create `opencode.json`:
 1. Check if plugin is installed: `ls ~/.config/opencode/plugins/saia.ts`
-2. Check if scripts exist in the repository directory
+2. Check if scripts exist in the src directory
 3. Check SAIA_API_KEY is set: `echo $SAIA_API_KEY`
-4. Check if master config exists: `ls opencode-saia.json`
+4. Check if master config exists: `ls src/opencode-saia.json`
 
 ### Script Fails
 
@@ -242,6 +232,8 @@ If SAIA models don't appear in OpenCode:
 ## Location
 
 **GitLab Repository:** https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin
+
+All files are located in the `src/` directory of the repository.
 
 **Clone the repository:**
 ```bash

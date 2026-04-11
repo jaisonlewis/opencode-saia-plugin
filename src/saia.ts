@@ -14,9 +14,8 @@ export const SAIAPlugin: Plugin = async ({ directory }) => {
   
   // Get the plugin directory from the current file location
   const pluginDir = dirname(__filename)
-  const generateScript = join(pluginDir, "..", "generate-saia-config.sh")
-  const copyScript = join(pluginDir, "..", "copy-saia-config.sh")
-  const scriptDir = dirname(generateScript)
+  const generateScript = join(pluginDir, "generate-saia-config.sh")
+  const copyScript = join(pluginDir, "copy-saia-config.sh")
   
   // Check if scripts exist
   if (!existsSync(generateScript)) {
@@ -33,7 +32,7 @@ export const SAIAPlugin: Plugin = async ({ directory }) => {
     // Step 1: Update master configuration with latest models
     console.log("[SAIA Plugin] Running generate script to update master configuration...")
     execSync(generateScript, { 
-      cwd: scriptDir,
+      cwd: pluginDir,
       stdio: "inherit"
     })
   } catch (error) {
