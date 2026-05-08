@@ -8,16 +8,19 @@ Complete system for managing SAIA (GWDG Chat AI) configuration across multiple O
 
 This package provides scripts and configuration for SAIA integration:
 
-1. **`generate-saia-config.sh`** - Fetches latest SAIA models from API and updates master configuration
-2. **`copy-saia-config.sh`** - Copies master configuration to any project directory
-3. **`src/saia.ts`** - Experimental OpenCode plugin (auto-loading not functional in OpenCode 1.4.7)
-4. **`opencode-saia.json`** - Master configuration file with all SAIA models and permissions
+1. **`generate-saia-config.sh`** - Bash: fetches latest SAIA models and updates master configuration
+2. **`copy-saia-config.sh`** - Bash: copies master configuration to any project directory
+3. **`generate-saia-config.mjs`** - Node.js: cross-platform version (Linux/macOS/Windows)
+4. **`copy-saia-config.mjs`** - Node.js: cross-platform version (Linux/macOS/Windows)
+5. **`src/saia.ts`** - Experimental OpenCode plugin (auto-loading not functional in OpenCode 1.4.7)
+6. **`opencode-saia.json`** - Master configuration file with all SAIA models and permissions
 
 ## What It Does
 
 - **Automatic Updates**: Fetches latest SAIA models from GWDG Chat AI API
 - **Master Configuration**: Stores the most up-to-date SAIA configuration centrally
 - **Fast Deployment**: Quickly copies configuration to any project directory
+- **Cross-Platform**: Node.js scripts work on Linux, macOS, and Windows
 - **Full Permissions**: Includes all necessary OpenCode permissions for SAIA
 - **Formatters Enabled**: Automatic code formatting via OpenCode built-in formatters
 
@@ -47,7 +50,7 @@ source ~/.bashrc  # or source ~/.zshrc
 
 ## Quick Start
 
-### Scripts (Recommended)
+### Linux / macOS (Bash)
 
 Copy the scripts to a location in your PATH for easy access:
 
@@ -69,22 +72,53 @@ cd /path/to/opencode-saia-plugin/src
 
 The `copy-saia-config.sh` script copies the master `opencode-saia.json` to the current directory as `opencode.json`. Start OpenCode in that directory — SAIA models will be available.
 
+### Windows / Cross-Platform (Node.js)
+
+The `.mjs` scripts work on any OS with Node.js (already required for OpenCode):
+
+```bash
+# Or use them directly from the repo
+cd /path/to/opencode-saia-plugin/src
+
+# Update master config (requires SAIA_API_KEY)
+node generate-saia-config.mjs
+
+# Copy to any project directory
+node copy-saia-config.mjs
+```
+
+On Windows PowerShell:
+```powershell
+cd C:\path\to\opencode-saia-plugin\src
+node generate-saia-config.mjs
+node copy-saia-config.mjs
+```
+
 ## Files
 
 All files are located in the `src/` directory:
 
 ### Scripts
 
-- **`src/generate-saia-config.sh`**
+- **`src/generate-saia-config.sh`** (Linux/macOS)
   - Fetches latest SAIA models from `https://chat-ai.academiccloud.de/v1/models`
   - Generates complete `opencode.json` with SAIA provider, models, and permissions
   - Updates master configuration: `opencode-saia.json`
   - Shows model count and update status
 
-- **`src/copy-saia-config.sh`**
+- **`src/copy-saia-config.sh`** (Linux/macOS)
   - Copies master configuration to current directory as `opencode.json`
   - Fast operation (no API calls)
   - Shows model count
+
+- **`src/generate-saia-config.mjs`** (Cross-platform)
+  - Node.js equivalent of the bash script
+  - No external dependencies beyond Node.js itself
+  - Works on Linux, macOS, and Windows
+
+- **`src/copy-saia-config.mjs`** (Cross-platform)
+  - Node.js equivalent of the bash script
+  - Works on Linux, macOS, and Windows
 
 ### Plugin (Experimental)
 
@@ -104,8 +138,9 @@ All files are located in the `src/` directory:
 ## Requirements
 
 - **SAIA_API_KEY** environment variable (required for fetching models)
-- **curl** (for fetching models from SAIA API)
-- **jq** (for JSON processing)
+- **curl** (for bash scripts — fetching models from SAIA API)
+- **jq** (for bash scripts — JSON processing)
+- **Node.js** (for `.mjs` scripts — already required by OpenCode)
 
 ## Configuration
 
