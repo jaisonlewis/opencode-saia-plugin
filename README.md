@@ -37,7 +37,8 @@ cd opencode-saia-plugin
 
 ### Configure Environment Variables
 
-Add the following to your `~/.bashrc` or `~/.zshrc`:
+**Linux / macOS (Bash/Zsh):**
+Add to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 export SAIA_API_KEY="your_api_key_here"
@@ -47,6 +48,26 @@ Then reload:
 ```bash
 source ~/.bashrc  # or source ~/.zshrc
 ```
+
+**Windows (PowerShell — persistent for current user):**
+```powershell
+[Environment]::SetEnvironmentVariable("SAIA_API_KEY", "your_api_key_here", "User")
+```
+
+**Windows (CMD — current session only):**
+```cmd
+set SAIA_API_KEY=your_api_key_here
+```
+
+**Windows (System Settings — persistent across sessions):**
+1. Open Start Menu → search for "Environment Variables"
+2. Click "Edit the system environment variables"
+3. Click "Environment Variables..."
+4. Under "User variables", click "New..."
+5. Variable name: `SAIA_API_KEY`
+6. Variable value: your API key
+7. Click OK, then OK again
+8. Restart your terminal/PowerShell/CMD
 
 ## Quick Start
 
