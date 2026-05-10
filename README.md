@@ -1,6 +1,6 @@
 # SAIA Plugin for OpenCode
 
-Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `opencode`. The plugin keeps your global `~/.config/opencode/opencode.json` in sync with SAIA's current model list — refreshed in the background on every launch, with the new list available from the next launch onward. Permissions (bash, edit, read, grep, etc.) are pre-added automatically so you don't have to configure them manually.
+Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `opencode`. The plugin keeps your global `~/.config/opencode/opencode.json` in sync with SAIA's current model list — refreshed in the background on every launch, with the new list available from the next launch onward.
 
 ## Setup
 
@@ -88,11 +88,10 @@ Runs the same logic as the plugin, but logs to stdout and exits non-zero on fail
 2. **Fire-and-forget**: Starts an async refresh, immediately returns `{}` — never blocks startup
 3. **Fetch**: `fetch()` to SAIA's `/v1/models` with a 3-second hard timeout (`AbortSignal.timeout`)
 4. **Merge**: Reads existing `~/.config/opencode/opencode.json`, only mutates `provider.saia`
-5. **Permissions**: Adds the standard SAIA permission set if missing (bash, edit, read, grep, glob, lsp, skill, task, webfetch, websearch, question, external_directory: ask, doom_loop: ask)
-6. **Model selection**: Only changes `config.model` if empty or the chosen model disappeared
-7. **Atomic write**: Writes to `.tmp`, then `fs.rename()` — crash-safe, never half-written
-8. **Next launch**: Updated config is picked up on the next `opencode` start
-9. **Silent failures**: Network errors or missing API key are swallowed. Worst case: yesterday's list stays for one more launch
+5. **Model selection**: Only changes `config.model` if empty or the chosen model disappeared
+6. **Atomic write**: Writes to `.tmp`, then `fs.rename()` — crash-safe, never half-written
+7. **Next launch**: Updated config is picked up on the next `opencode` start
+8. **Silent failures**: Network errors or missing API key are swallowed. Worst case: yesterday's list stays for one more launch
 
 ## Requirements
 
