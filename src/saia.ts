@@ -1,62 +1,18 @@
-import path from "node:path"
-import os from "node:os"
-import fs from "node:fs/promises"
+// Drop this file into ~/.config/opencode/plugins/saia.ts
+// and add "plugin": ["./saia"] to ~/.config/opencode/opencode.json
 
-const CONFIG = path.join(os.homedir(), ".config", "opencode", "opencode.json")
-const ENDPOINT = "https://chat-ai.academiccloud.de/v1/models"
+// @ts-ignore — plugin runs inside opencode's bundled runtime
+import { refreshSaiaConfig } from "./lib/refresh-config.mjs"
 
 export default async ({ client }: { client: any }) => {
-  refreshSaiaConfig(client).catch(() => {})
+  // fire-and-forget: never block startup, never throw
+  ;(async () => {
+    try {
+      const result = await refreshSaiaConfig()
+      await client.app.log({
+        body: { service: "saia", level: "info", message: `refreshed ${result.modelCount} models` },
+      })
+    } catch { /* silent on all errors */ }
+  })()
   return {}
-}
-
-async function refreshSaiaConfig(client: any) {
-  const apiKey = process.env.SAIA_API_KEY
-  if (!apiKey) return
-
-  const res = await fetch(ENDPOINT, {
-    headers: { Authorization: `Bearer ${apiKey}` },
-    signal: AbortSignal.timeout(3000),
-  })
-  if (!res.ok) return
-  const { data } = await res.json() as { data: Array<{ id: string }> }
-  const modelIds = data.map(m => m.id)
-
-  let config: any = {}
-  try {
-    config = JSON.parse(await fs.readFile(CONFIG, "utf8"))
-  } catch { /* file missing or invalid, start fresh */ }
-
-  const models: Record<string, { name: string; options: { "enable-tools": true } }> = {}
-  for (const id of modelIds) {
-    models[id] = { name: id, options: { "enable-tools": true } }
-  }
-
-  config.$schema ??= "https://opencode.ai/config.json"
-  config.provider ??= {}
-  config.provider.saia = {
-    npm: "@ai-sdk/openai-compatible",
-    name: "SAIA (GWDG Chat AI)",
-    options: {
-      baseURL: "https://chat-ai.academiccloud.de/v1",
-      apiKey: "{env:SAIA_API_KEY}",
-      headers: { "inference-service": "saia-openai-gateway" },
-    },
-    models,
-  }
-
-  const current = config.model
-  const currentIsSaia = typeof current === "string" && current.startsWith("saia/")
-  const currentModelId = currentIsSaia ? current.slice(5) : null
-  if (!current || (currentIsSaia && !modelIds.includes(currentModelId!))) {
-    config.model = modelIds.includes("glm-4.7") ? "saia/glm-4.7" : `saia/${modelIds[0]}`
-  }
-
-  const tmp = CONFIG + ".tmp"
-  await fs.writeFile(tmp, JSON.stringify(config, null, 2))
-  await fs.rename(tmp, CONFIG)
-
-  await client.app.log({
-    body: { service: "saia", level: "info", message: `refreshed ${modelIds.length} models` },
-  }).catch(() => {})
 }
