@@ -80,7 +80,7 @@ jq -n \
       external_directory: "ask",
       doom_loop: "ask"
     },
-    formatter: true,
+    formatter: {},
     model: "saia/glm-4.7",
     provider: {
       saia: {
