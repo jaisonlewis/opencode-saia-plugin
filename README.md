@@ -1,41 +1,21 @@
-# SAIA Configuration Manager for OpenCode
+# SAIA Plugin for OpenCode
 
-Complete system for managing SAIA (GWDG Chat AI) configuration across multiple OpenCode projects.
+One-file plugin that keeps your SAIA (GWDG Chat AI) model list automatically refreshed in OpenCode.
 
 **Repository:** https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin
 
-## Overview
-
-This package provides scripts and configuration for SAIA integration:
-
-1. **`generate-saia-config.sh`** - Bash: fetches latest SAIA models and updates master configuration
-2. **`copy-saia-config.sh`** - Bash: copies master configuration to any project directory
-3. **`generate-saia-config.mjs`** - Node.js: cross-platform version (Linux/macOS/Windows)
-4. **`copy-saia-config.mjs`** - Node.js: cross-platform version (Linux/macOS/Windows)
-5. **`src/saia.ts`** - Experimental OpenCode plugin (auto-loading not functional in OpenCode 1.4.7)
-6. **`opencode-saia.json`** - Master configuration file with all SAIA models and permissions
-
 ## What It Does
 
-- **Automatic Updates**: Fetches latest SAIA models from GWDG Chat AI API
-- **Master Configuration**: Stores the most up-to-date SAIA configuration centrally
-- **Fast Deployment**: Quickly copies configuration to any project directory
-- **Cross-Platform**: Node.js scripts work on Linux, macOS, and Windows
-- **Full Permissions**: Includes all necessary OpenCode permissions for SAIA
-- **Formatters Enabled**: Automatic code formatting via OpenCode built-in formatters
+- **Automatic Updates**: On every OpenCode launch, fetches the latest SAIA model list from the API
+- **Global Config**: Updates `~/.config/opencode/opencode.json` so SAIA works in every directory
+- **Preserves Your Settings**: Only touches `provider.saia` — never overwrites your permissions, agents, MCP servers, or chosen default model
+- **Self-Healing**: If SAIA removes a model you had selected, it auto-switches to `glm-4.7` (or the first available model)
+- **Zero Blocking**: 3-second hard timeout, fire-and-forget. A flaky network or SAIA outage never delays your OpenCode startup
+- **Cross-Platform**: Pure Node.js — no curl, jq, or OS-specific wrappers needed
 
-## Installation
+## One-Time Setup
 
-Install official version of Opencode from https://opencode.ai/
-
-### Clone the Repository
-
-```bash
-git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
-cd opencode-saia-plugin
-```
-
-### Configure Environment Variables
+### 1. Set SAIA_API_KEY
 
 **Linux / macOS (Bash/Zsh):**
 Add to your `~/.bashrc` or `~/.zshrc`:
@@ -49,7 +29,7 @@ Then reload:
 source ~/.bashrc  # or source ~/.zshrc
 ```
 
-**Windows (PowerShell — persistent for current user):**
+**Windows (PowerShell — persistent):**
 ```powershell
 [Environment]::SetEnvironmentVariable("SAIA_API_KEY", "your_api_key_here", "User")
 ```
@@ -59,197 +39,131 @@ source ~/.bashrc  # or source ~/.zshrc
 set SAIA_API_KEY=your_api_key_here
 ```
 
-**Windows (System Settings — persistent across sessions):**
-1. Open Start Menu → search for "Environment Variables"
-2. Click "Edit the system environment variables"
-3. Click "Environment Variables..."
-4. Under "User variables", click "New..."
-5. Variable name: `SAIA_API_KEY`
-6. Variable value: your API key
-7. Click OK, then OK again
-8. Restart your terminal/PowerShell/CMD
-
-## Quick Start
-
-### Linux / macOS (Bash)
-
-Copy the scripts to a location in your PATH for easy access:
+### 2. Install the Plugin
 
 ```bash
-# One-time setup
-cp src/generate-saia-config.sh ~/.local/bin/
-cp src/copy-saia-config.sh ~/.local/bin/
-chmod +x ~/.local/bin/generate-saia-config.sh ~/.local/bin/copy-saia-config.sh
-
-# Or use them directly from the repo
-cd /path/to/opencode-saia-plugin/src
-
-# Update master config (requires SAIA_API_KEY)
-./generate-saia-config.sh
-
-# Copy to any project directory
-./copy-saia-config.sh
+mkdir -p ~/.config/opencode/plugins
+curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/src/saia.ts \
+  -o ~/.config/opencode/plugins/saia.ts
 ```
 
-The `copy-saia-config.sh` script copies the master `opencode-saia.json` to the current directory as `opencode.json`. Start OpenCode in that directory — SAIA models will be available.
+### 3. Register the Plugin
 
-### Windows / Cross-Platform (Node.js)
+Add this to `~/.config/opencode/opencode.json` (create the file if it doesn't exist):
 
-The `.mjs` scripts work on any OS with Node.js (already required for OpenCode):
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["./saia"]
+}
+```
+
+### 4. Add Permissions (Optional but Recommended)
+
+If you want the same permission set everywhere, also add this to the global config:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["./saia"],
+  "permission": {
+    "bash": "allow",
+    "edit": "allow",
+    "read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "task": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "question": "allow",
+    "external_directory": "ask",
+    "doom_loop": "ask"
+  }
+}
+```
+
+### 5. Launch OpenCode
 
 ```bash
-# Or use them directly from the repo
-cd /path/to/opencode-saia-plugin/src
-
-# Update master config (requires SAIA_API_KEY)
-node generate-saia-config.mjs
-
-# Copy to any project directory
-node copy-saia-config.mjs
+cd ~/any-project
+opencode
 ```
 
-On Windows PowerShell:
-```powershell
-cd C:\path\to\opencode-saia-plugin\src
-node generate-saia-config.mjs
-node copy-saia-config.mjs
+On first launch the plugin refreshes the model list in the background. From then on, SAIA models are always current.
+
+## Manual Refresh (Without Launching OpenCode)
+
+If you want to update the model list without starting OpenCode, use the standalone Node.js script:
+
+```bash
+cd ~/.config/opencode/plugins
+node -e "$(curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/src/generate-saia-config.mjs)"
+```
+
+Or clone the repo and run it locally:
+
+```bash
+git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
+cd opencode-saia-plugin/src
+node generate-saia-config.mjs   # fetches latest models
+node copy-saia-config.mjs        # copies to current directory
 ```
 
 ## Files
 
-All files are located in the `src/` directory:
+| File | Purpose |
+|------|---------|
+| `src/saia.ts` | **The plugin** — drop into `~/.config/opencode/plugins/` |
+| `src/generate-saia-config.mjs` | Standalone Node.js refresher (manual use) |
+| `src/copy-saia-config.mjs` | Standalone Node.js copier (manual use) |
+| `src/generate-saia-config.sh` | Bash version for systems preferring shell scripts |
+| `src/copy-saia-config.sh` | Bash version for systems preferring shell scripts |
+| `src/opencode-saia.json` | Example full config with permissions and all 21 models |
 
-### Scripts
+## How the Plugin Works
 
-- **`src/generate-saia-config.sh`** (Linux/macOS)
-  - Fetches latest SAIA models from `https://chat-ai.academiccloud.de/v1/models`
-  - Generates complete `opencode.json` with SAIA provider, models, and permissions
-  - Updates master configuration: `opencode-saia.json`
-  - Shows model count and update status
-
-- **`src/copy-saia-config.sh`** (Linux/macOS)
-  - Copies master configuration to current directory as `opencode.json`
-  - Fast operation (no API calls)
-  - Shows model count
-
-- **`src/generate-saia-config.mjs`** (Cross-platform)
-  - Node.js equivalent of the bash script
-  - No external dependencies beyond Node.js itself
-  - Works on Linux, macOS, and Windows
-
-- **`src/copy-saia-config.mjs`** (Cross-platform)
-  - Node.js equivalent of the bash script
-  - Works on Linux, macOS, and Windows
-
-### Plugin (Experimental)
-
-- **`src/saia.ts`**
-  - OpenCode plugin intended to run both scripts automatically on startup
-  - Currently non-functional: OpenCode 1.4.7 does not auto-execute `.ts` plugins from `~/.config/opencode/plugins/`
-  - Use the shell scripts directly instead
-
-### Configuration
-
-- **`src/opencode-saia.json`**
-  - Master configuration file
-  - Contains all 21 SAIA models with descriptions
-  - Includes full OpenCode permissions
-  - Updated when new models are available
+1. **Startup hook**: OpenCode loads `~/.config/opencode/plugins/saia.ts` because you registered `"plugin": ["./saia"]`
+2. **Fire and forget**: The plugin starts an async refresh and immediately returns `{}` so OpenCode startup is never blocked
+3. **Fetch with timeout**: `fetch()` to SAIA's `/v1/models` endpoint with a 3-second `AbortSignal.timeout`
+4. **Read existing config**: Parses the current `~/.config/opencode/opencode.json` so your settings are preserved
+5. **Build provider block**: Creates the `provider.saia` object with all current models
+6. **Smart default model**: Only changes `config.model` if it's empty or points to a model that no longer exists
+7. **Atomic write**: Writes to a `.tmp` file, then `fs.rename()` — even if you `^C` mid-write, you never get a broken config
+8. **Silent on failure**: Network errors, missing API key, or API outages are swallowed. Worst case: yesterday's model list stays for one more launch
 
 ## Requirements
 
-- **SAIA_API_KEY** environment variable (required for fetching models)
-- **curl** (for bash scripts — fetching models from SAIA API)
-- **jq** (for bash scripts — JSON processing)
-- **Node.js** (for `.mjs` scripts — already required by OpenCode)
+- **OpenCode** (official install from [opencode.ai](https://opencode.ai))
+- **Node.js** (already required by OpenCode)
+- **SAIA_API_KEY** environment variable
 
-## Configuration
-
-The generated `opencode.json` includes:
-
-- **SAIA Provider**: Configured with GWDG Chat AI endpoint
-- **21 Models**: All available SAIA models with categorized descriptions
-- **Full Permissions**: bash, edit, read, grep, glob, lsp, skill, task, webfetch, websearch, question, external_directory, doom_loop
-- **Default Model**: `saia/glm-4.7`
-
-## Model Categories
-
-Models are automatically categorized:
-
-- **Planning - Advanced Reasoning**: Thinking and reasoning models (DeepSeek-R1, etc.)
-- **Building - Specialized Coding**: Coder-specific models
-- **Planning - Large Context**: Large context window models (120B, 235B, 675B)
-- **Building - Agentic Coding**: Agentic coding models (GLM-4.7, Devstral)
-- **General Purpose**: All other models
-
-## Benefits
-
-- **Always Up to Date**: Run `generate-saia-config.sh` to refresh models from the API
-- **Fast Deployment**: `copy-saia-config.sh` is instant (no API calls)
-- **Consistent**: All projects use the same master configuration
-- **Easy Updates**: Update once, deploy to many projects
-- **No Core Modifications**: Doesn't patch OpenCode's source code
-- **Full Permissions**: Includes all necessary OpenCode permissions
-- **Formatters Enabled**: Code formatting via OpenCode's built-in formatter support
-
-## Workflow
-
-1. Run `generate-saia-config.sh` to update master configuration with latest models
-2. Run `copy-saia-config.sh` in each project directory where you want SAIA models
-3. Start OpenCode in that directory
-4. Repeat step 1 when new models are available
+No additional dependencies. The plugin uses only Node.js built-ins (`node:path`, `node:os`, `node:fs/promises`, `fetch`).
 
 ## Troubleshooting
 
-### Models Not Available
+### Plugin doesn't seem to run
 
-If SAIA models don't appear in OpenCode:
-1. Verify `opencode.json` exists in the project directory
-2. Check the config is valid: `jq . opencode.json`
-3. Ensure SAIA_API_KEY is set in the environment where you run OpenCode
+1. Verify the file is in the right place: `ls ~/.config/opencode/plugins/saia.ts`
+2. Verify the plugin is registered in your global config: `cat ~/.config/opencode/opencode.json | jq '.plugin'`
+3. Make sure `SAIA_API_KEY` is exported in the shell where you run `opencode`
+4. Check if the global config was updated after launch: `cat ~/.config/opencode/opencode.json | jq '.provider.saia.models | length'`
 
-### Script Fails
+### SAIA_API_KEY not set
 
-If a script fails:
-1. Verify SAIA_API_KEY is set correctly
-2. Check internet connectivity
-3. Verify `curl` and `jq` are installed
-4. Check SAIA API is accessible: `curl -H "Authorization: Bearer $SAIA_API_KEY" https://chat-ai.academiccloud.de/v1/models`
+The plugin silently skips if `SAIA_API_KEY` is missing. Set it and restart OpenCode.
 
-### Models Not Appearing in OpenCode
+### Broken config after crash
 
-If SAIA models don't appear in OpenCode:
-1. Verify `opencode.json` exists in the directory
-2. Check that SAIA is in the provider registry
-3. Consider using the SAIA fork for full integration (see Alternative section below)
+Because of atomic writes (`writeFile` + `rename`), a crash during the write never leaves a half-written file. If you're still worried, keep a backup:
 
-## Location
-
-**GitLab Repository:** https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin
-
-All files are located in the `src/` directory of the repository.
-
-**Clone the repository:**
 ```bash
-git clone https://gitlab-ce.gwdg.de/jlewis/opencode-saia-plugin.git
-cd opencode-saia-plugin
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.bak
 ```
 
 ## Alternative: Full SAIA Integration
 
-This project works with the **standard OpenCode installation** from [opencode.ai](https://opencode.ai). No patches or forks are required — the shell scripts and `opencode.json` configuration are fully compatible with the official release.
+This plugin works with the **standard OpenCode installation**. No patches or forks required.
 
-For users who want deeper integration (e.g., SAIA models appearing in the `/model` command without a config file, or a custom provider loader), a patched OpenCode fork exists:
-
-```bash
-cd /path/to/opencode-fork
-./install.sh
-```
-
-The fork provides:
-- Patched OpenCode core code
-- SAIA custom loader
-- Full provider registry integration
-- All SAIA models appear in `/model` command
-
-**Most users should use the standard OpenCode + this project's scripts.**
+For users who want SAIA models hardcoded into OpenCode's `/model` command without any config file, a patched OpenCode fork exists. **Most users should use this plugin instead.**
