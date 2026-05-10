@@ -6,10 +6,16 @@ Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `o
 
 ### 1. Set SAIA_API_KEY
 
-**Linux / macOS:**
+**Linux / macOS (permanent):**
 ```bash
-export SAIA_API_KEY="your_api_key_here"
-# Add to ~/.bashrc or ~/.zshrc for permanence
+echo 'export SAIA_API_KEY="your_api_key_here"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Or for zsh:
+```bash
+echo 'export SAIA_API_KEY="your_api_key_here"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
 **Windows (PowerShell — permanent):**
