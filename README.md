@@ -67,9 +67,8 @@ Runs the same logic as the plugin, but logs to stdout and exits non-zero on fail
 
 | File | Purpose |
 |------|---------|
-| `src/saia.ts` | **The plugin** — auto-refresh on every opencode launch |
-| `src/lib/refresh-config.mjs` | Shared logic (fetch, merge, atomic write, permissions) |
-| `src/generate-saia-config.mjs` | Manual CLI — thin wrapper around shared logic |
+| `src/saia.ts` | **The plugin** — single file, drop into `~/.config/opencode/plugins/` |
+| `src/generate-saia-config.mjs` | Manual CLI — self-contained, for power users |
 | `src/opencode-saia.json` | Example full config (reference / fallback snapshot) |
 
 ## How It Works
@@ -81,7 +80,8 @@ Runs the same logic as the plugin, but logs to stdout and exits non-zero on fail
 5. **Permissions**: Adds the standard SAIA permission set if missing (bash, edit, read, grep, glob, lsp, skill, task, webfetch, websearch, question, external_directory: ask, doom_loop: ask)
 6. **Model selection**: Only changes `config.model` if empty or the chosen model disappeared
 7. **Atomic write**: Writes to `.tmp`, then `fs.rename()` — crash-safe, never half-written
-8. **Silent failures**: Network errors or missing API key are swallowed. Worst case: yesterday's list stays for one more launch
+8. **Next launch**: Updated config is picked up on the next `opencode` start
+9. **Silent failures**: Network errors or missing API key are swallowed. Worst case: yesterday's list stays for one more launch
 
 ## Requirements
 
