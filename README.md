@@ -42,9 +42,15 @@ curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/ma
   -o ~/.config/opencode/plugins/saia.ts
 ```
 
-### 3. Register the Plugin
+### 3. Launch
 
-Add to `~/.config/opencode/opencode.json` (create if missing):
+If you used the install script above, the plugin is already registered. Just run:
+
+```bash
+opencode
+```
+
+**If you installed manually**, add this to `~/.config/opencode/opencode.json` (create if missing):
 
 ```json
 {
@@ -53,13 +59,7 @@ Add to `~/.config/opencode/opencode.json` (create if missing):
 }
 ```
 
-The plugin adds permissions automatically on first run.
-
-### 4. Launch
-
-```bash
-opencode
-```
+Then run `opencode`.
 
 First launch refreshes the model list in the background. From then on, SAIA models are always current.
 

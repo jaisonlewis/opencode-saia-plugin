@@ -8,22 +8,37 @@ if (-not $env:SAIA_API_KEY) {
 }
 
 $pluginDir = Join-Path $env:USERPROFILE ".config\opencode\plugins"
+$pluginPath = Join-Path $pluginDir "saia.ts"
+$configFile = Join-Path $env:USERPROFILE ".config\opencode\opencode.json"
+
 New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
 
-$pluginUrl = "https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/src/saia.ts"
-$pluginPath = Join-Path $pluginDir "saia.ts"
-
 Write-Host "Downloading saia.ts..."
-Invoke-WebRequest -Uri $pluginUrl -OutFile $pluginPath -UseBasicParsing
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/src/saia.ts" -OutFile $pluginPath -UseBasicParsing
 
 Write-Host ""
-Write-Host "✓ Plugin installed to $pluginPath"
+
+# Auto-configure opencode.json
+if (-not (Test-Path $configFile)) {
+    $configDir = Split-Path $configFile -Parent
+    New-Item -ItemType Directory -Force -Path $configDir | Out-Null
+    $config = @{
+        '$schema' = "https://opencode.ai/config.json"
+        plugin = @("./saia")
+    } | ConvertTo-Json -Depth 10
+    $config | Set-Content $configFile -Encoding UTF8
+    Write-Host "✓ Created $configFile with plugin registration"
+} else {
+    $config = Get-Content $configFile -Raw | ConvertFrom-Json
+    if ($config.plugin -contains "./saia") {
+        Write-Host "✓ Plugin already registered in $configFile"
+    } else {
+        if (-not $config.plugin) { $config.plugin = @() }
+        $config.plugin += "./saia"
+        $config | ConvertTo-Json -Depth 10 | Set-Content $configFile -Encoding UTF8
+        Write-Host "✓ Added plugin registration to $configFile"
+    }
+}
+
 Write-Host ""
-Write-Host "Next: add this to your opencode.json (usually in ~\.config\opencode\opencode.json):"
-Write-Host ""
-Write-Host '  {'
-Write-Host '    "$schema": "https://opencode.ai/config.json",'
-Write-Host '    "plugin": ["./saia"]'
-Write-Host '  }'
-Write-Host ""
-Write-Host "Then run: opencode"
+Write-Host "Done. Run: opencode"
