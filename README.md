@@ -25,6 +25,17 @@ source ~/.zshrc
 
 ### 2. Install the Plugin
 
+**Linux / macOS (script):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/install.sh | bash
+```
+
+**Windows (PowerShell script):**
+```powershell
+Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/install.ps1" -UseBasicParsing).Content
+```
+
+**Or install manually:**
 ```bash
 mkdir -p ~/.config/opencode/plugins
 curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/master/src/saia.ts \
