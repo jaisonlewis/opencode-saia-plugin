@@ -13,6 +13,22 @@ import fs from "node:fs/promises"
 const CONFIG = path.join(os.homedir(), ".config", "opencode", "opencode.json")
 const ENDPOINT = "https://chat-ai.academiccloud.de/v1/models"
 
+const PERMISSIONS = {
+  bash: "allow",
+  edit: "allow",
+  read: "allow",
+  grep: "allow",
+  glob: "allow",
+  lsp: "allow",
+  skill: "allow",
+  task: "allow",
+  webfetch: "allow",
+  websearch: "allow",
+  question: "allow",
+  external_directory: "ask",
+  doom_loop: "ask",
+}
+
 const GREEN = "\x1b[32m"
 const RED = "\x1b[31m"
 const NC = "\x1b[0m"
@@ -51,6 +67,7 @@ async function refreshSaiaConfig() {
   }
 
   config.$schema ??= "https://opencode.ai/config.json"
+  config.permission = { ...PERMISSIONS, ...(config.permission || {}) }
   config.provider ??= {}
   config.provider.saia = {
     npm: "@ai-sdk/openai-compatible",
