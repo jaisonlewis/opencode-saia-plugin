@@ -50,7 +50,14 @@ async function refreshSaiaConfig(client: any) {
 
   const models: Record<string, any> = {}
   for (const id of modelIds) {
-    models[id] = { name: id, options: { "enable-tools": true } }
+    models[id] = {
+      name: id,
+      options: {
+        "enable-tools": true,
+        "enable-auto-tool-choice": true,
+        "tool-call-parser": "openai",
+      },
+    }
   }
 
   config.$schema ??= "https://opencode.ai/config.json"
