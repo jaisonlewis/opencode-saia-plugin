@@ -2,6 +2,13 @@
 
 Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `opencode`. The plugin keeps your global `~/.config/opencode/opencode.json` in sync with SAIA's current model list — refreshed in the background on every launch, with the new list available from the next launch onward. Permissions (bash, edit, read, grep, etc.) are pre-added automatically so you don't have to configure them manually.
 
+## Pre-setup
+
+Before installing the plugin, ensure you have:
+
+1. **OpenCode installed** - Download from [Opencode.ai](https://opencode.ai)
+2. **SAIA API key** - Get from [SAIA AI](https://docs.hpc.gwdg.de/services/ai-services/saia/index.html#api-request)
+
 ## Setup
 
 ### 1. Set SAIA_API_KEY
