@@ -62,7 +62,6 @@ async function refreshSaiaConfig(client: any) {
     options: {
       baseURL: "https://chat-ai.academiccloud.de/v1",
       apiKey: "{env:SAIA_API_KEY}",
-      headers: { "inference-service": "saia-openai-gateway" },
     },
     models,
   }
