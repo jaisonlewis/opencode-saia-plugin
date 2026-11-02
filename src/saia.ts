@@ -1,5 +1,5 @@
 // Drop this file into ~/.config/opencode/plugins/saia.ts
-// OpenCode discovers local plugins automatically (V1 >=1.18.29 and V2).
+// OpenCode discovers local plugins automatically.
 
 import path from "node:path"
 import os from "node:os"
@@ -24,7 +24,6 @@ const PERMISSIONS = {
   doom_loop: "ask",
 }
 
-// V1 >=1.18.29 calls server(); V2 calls setup().
 export default {
   id: "saia",
   async setup() {
