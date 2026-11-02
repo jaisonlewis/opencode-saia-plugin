@@ -19,35 +19,18 @@ curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/ma
 
 echo ""
 
-# Auto-configure opencode.json
+# Local plugins are discovered automatically in supported V1 and V2 releases.
+# Do not add an explicit file registration: V2 configured paths require directories.
 if [ ! -f "$CONFIG_FILE" ]; then
   mkdir -p "$(dirname "$CONFIG_FILE")"
   cat > "$CONFIG_FILE" << 'EOF'
 {
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["./saia"]
+  "$schema": "https://opencode.ai/config.json"
 }
 EOF
-  echo "✓ Created $CONFIG_FILE with plugin registration"
+  echo "✓ Created $CONFIG_FILE"
 else
-  if grep -q '"plugin"' "$CONFIG_FILE" 2>/dev/null && grep -q '"./saia"' "$CONFIG_FILE" 2>/dev/null; then
-    echo "✓ Plugin already registered in $CONFIG_FILE"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 -c "
-import json
-with open('$CONFIG_FILE', 'r') as f:
-    config = json.load(f)
-config.setdefault('plugin', [])
-if './saia' not in config['plugin']:
-    config['plugin'].append('./saia')
-with open('$CONFIG_FILE', 'w') as f:
-    json.dump(config, f, indent=2)
-    f.write('\n')
-"
-    echo "✓ Added plugin registration to $CONFIG_FILE"
-  else
-    echo "⚠ Config file exists. Please ensure it contains: \"plugin\": [\"./saia\"]"
-  fi
+  echo "✓ Keeping existing $CONFIG_FILE; local plugin discovery needs no registration"
 fi
 
 echo ""
