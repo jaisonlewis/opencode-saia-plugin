@@ -18,26 +18,18 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jaisonlewis/opencode-s
 
 Write-Host ""
 
-# Auto-configure opencode.json
+# Local plugins are discovered automatically in supported V1 and V2 releases.
+# V2 configured paths require directories, so do not register this file explicitly.
 if (-not (Test-Path $configFile)) {
     $configDir = Split-Path $configFile -Parent
     New-Item -ItemType Directory -Force -Path $configDir | Out-Null
     $config = @{
         '$schema' = "https://opencode.ai/config.json"
-        plugin = @("./saia")
     } | ConvertTo-Json -Depth 10
     $config | Set-Content $configFile -Encoding UTF8
-    Write-Host "✓ Created $configFile with plugin registration"
+    Write-Host "✓ Created $configFile"
 } else {
-    $config = Get-Content $configFile -Raw | ConvertFrom-Json
-    if ($config.plugin -contains "./saia") {
-        Write-Host "✓ Plugin already registered in $configFile"
-    } else {
-        if (-not $config.plugin) { $config.plugin = @() }
-        $config.plugin += "./saia"
-        $config | ConvertTo-Json -Depth 10 | Set-Content $configFile -Encoding UTF8
-        Write-Host "✓ Added plugin registration to $configFile"
-    }
+    Write-Host "✓ Keeping existing $configFile; local plugin discovery needs no registration"
 }
 
 Write-Host ""

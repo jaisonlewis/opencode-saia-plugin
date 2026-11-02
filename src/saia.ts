@@ -1,5 +1,5 @@
 // Drop this file into ~/.config/opencode/plugins/saia.ts
-// and add "plugin": ["./saia"] to ~/.config/opencode/opencode.json
+// OpenCode discovers local plugins automatically (V1 >=1.18.29 and V2).
 
 import path from "node:path"
 import os from "node:os"
@@ -24,12 +24,19 @@ const PERMISSIONS = {
   doom_loop: "ask",
 }
 
-export default async ({ client }: { client: any }) => {
-  refreshSaiaConfig(client).catch(() => {})
-  return {}
+// V1 >=1.18.29 calls server(); V2 calls setup().
+export default {
+  id: "saia",
+  async setup() {
+    await refreshSaiaConfig().catch(() => {})
+  },
+  async server({ client }: { client: any }) {
+    void refreshSaiaConfig(client).catch(() => {})
+    return {}
+  },
 }
 
-async function refreshSaiaConfig(client: any) {
+async function refreshSaiaConfig(client?: any) {
   const apiKey = process.env.SAIA_API_KEY
   if (!apiKey) return
 
@@ -80,10 +87,14 @@ async function refreshSaiaConfig(client: any) {
     config.model = modelIds.includes("glm-4.7") ? "saia/glm-4.7" : `saia/${modelIds[0]}`
   }
 
+  const next = JSON.stringify(config, null, 2) + "\n"
+  // Avoid repeated reloads when V2 watches the generated configuration.
+  if (await fs.readFile(CONFIG, "utf8").catch(() => "") === next) return
   const tmp = CONFIG + ".tmp"
-  await fs.writeFile(tmp, JSON.stringify(config, null, 2))
+  await fs.writeFile(tmp, next)
   await fs.rename(tmp, CONFIG)
 
+  if (!client) return
   await client.app.log({
     body: { service: "saia", level: "info", message: `refreshed ${modelIds.length} models` },
   }).catch(() => {})

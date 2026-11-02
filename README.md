@@ -1,13 +1,21 @@
 # SAIA Plugin for OpenCode
 
-Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `opencode`. The plugin keeps your global `~/.config/opencode/opencode.json` in sync with SAIA's current model list — refreshed in the background on every launch, with the new list available from the next launch onward. Permissions (bash, edit, read, grep, etc.) are pre-added automatically so you don't have to configure them manually.
+Drop `saia.ts` into `~/.config/opencode/plugins/`, set `SAIA_API_KEY`, launch `opencode`. The plugin keeps your global `~/.config/opencode/opencode.json` in sync with SAIA's current model list. OpenCode 1 refreshes in the background; OpenCode 2 awaits the refresh during plugin setup. The persisted model list is available on the next launch. Permissions (bash, edit, read, grep, etc.) are pre-added automatically so you don't have to configure them manually.
 
 ## Pre-setup
 
 Before installing the plugin, ensure you have:
 
-1. **OpenCode installed** - Download from [Opencode.ai](https://opencode.ai)
+1. **OpenCode 1.18.29 or newer** (including OpenCode 2) - Download from [Opencode.ai](https://opencode.ai)
 2. **SAIA API key** - Get from [SAIA AI](https://docs.hpc.gwdg.de/services/ai-services/saia/index.html#api-request)
+
+## Version compatibility
+
+One plugin file supports both APIs: OpenCode 1 calls `server()` and OpenCode 2 calls `setup()`. Both entry points share the same SAIA discovery logic.
+
+**Minimum supported v1 version: 1.18.29.** Older v1 releases do not support the object entry point required for this shared format. They need a separate legacy release or entry point; renaming the file does not make it compatible.
+
+Native plugin loading and model discovery were tested on Linux x64 with **1.18.29, 1.19.5, and 2.2.0**, using an offline model-catalog fixture. Other versions and platforms have not been tested. See [compatibility details and test instructions](docs/compatibility.md).
 
 ## Setup
 
@@ -51,24 +59,15 @@ curl -fsSL https://raw.githubusercontent.com/jaisonlewis/opencode-saia-plugin/ma
 
 ### 3. Launch
 
-If you used the install script above, the plugin is already registered. Just run:
+Both supported v1 and v2 releases automatically discover `saia.ts` in the plugins directory. No explicit registration is needed. Run:
 
 ```bash
 opencode
 ```
 
-**If you installed manually**, add this to `~/.config/opencode/opencode.json` (create if missing):
+If upgrading from an older installation, remove only the `"./saia"` entry from any `plugin` or `plugins` array in your config, leaving other plugins intact. OpenCode 2 requires explicitly configured local plugin paths to name directories; automatic discovery avoids that mismatch.
 
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["./saia"]
-}
-```
-
-Then run `opencode`.
-
-First launch refreshes the model list in the background. From then on, SAIA models are always current.
+The first launch refreshes the persisted model list. Restart OpenCode to use newly discovered models. If the key is missing or discovery fails, the previous list is kept.
 
 ## Manual Refresh
 
@@ -91,19 +90,19 @@ Runs the same logic as the plugin, but logs to stdout and exits non-zero on fail
 
 ## How It Works
 
-1. **Startup**: OpenCode loads the plugin because you registered `"plugin": ["./saia"]`
-2. **Fire-and-forget**: Starts an async refresh, immediately returns `{}` — never blocks startup
+1. **Startup**: OpenCode automatically discovers `saia.ts` in its plugins directory
+2. **Version-specific entry point**: V1 starts a background refresh and returns `{}`; V2 awaits refresh in `setup()`, bounded by the fetch timeout below
 3. **Fetch**: `fetch()` to SAIA's `/v1/models` with a 3-second hard timeout (`AbortSignal.timeout`)
-4. **Merge**: Reads existing `~/.config/opencode/opencode.json`, only mutates `provider.saia`
+4. **Merge**: Reads existing `~/.config/opencode/opencode.json` and updates `provider.saia`, permissions, and the default model as described below
 5. **Permissions**: Adds the standard SAIA permission set if missing (bash, edit, read, grep, glob, lsp, skill, task, webfetch, websearch, question, external_directory: ask, doom_loop: ask)
 6. **Model selection**: Only changes `config.model` if empty or the chosen model disappeared
-7. **Atomic write**: Writes to `.tmp`, then `fs.rename()` — crash-safe, never half-written
+7. **Atomic write**: Skips unchanged content; otherwise writes to `.tmp`, then `fs.rename()` — avoids repeated config reloads and never leaves a half-written config
 8. **Next launch**: Updated config is picked up on the next `opencode` start
 9. **Silent failures**: Network errors or missing API key are swallowed. Worst case: yesterday's list stays for one more launch
 
 ## Requirements
 
-- **OpenCode** (official install from [opencode.ai](https://opencode.ai))
+- **OpenCode 1.18.29+ or OpenCode 2** (official install from [opencode.ai](https://opencode.ai))
 - **Node.js** (already required by OpenCode)
 - **SAIA_API_KEY** environment variable
 
